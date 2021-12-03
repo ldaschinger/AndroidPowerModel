@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="BatteryStats:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/BatteryStats_jar</output-path>
+    <root id="archive" name="BatteryStats.jar">
+      <element id="module-output" name="BatteryStats" />
+    </root>
+  </artifact>
+</component>
