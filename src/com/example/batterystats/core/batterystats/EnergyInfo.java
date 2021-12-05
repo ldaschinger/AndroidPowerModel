@@ -6,13 +6,13 @@ import java.util.List;
 public class EnergyInfo {
 
     // class for the list of matching uid to package names
-    class uidToPackage {
+    static class uidToPackage {
         int uid = 9999;
         String packageName = "";
     }
 
     // class for the global utilization stats of Bluetooth
-    class bluetooth {
+    static class bluetooth {
         int idle = 0;
         int rx = 0;
         int tx = 0;
@@ -21,14 +21,19 @@ public class EnergyInfo {
 
 
     // class of process for every uid with respective CPU user and kernel time
-    class processPerUid{
+    static class processPerUid{
         String processName = "";
         int userCPUTime = 0;
         int kernelCPUTime = 0;
     }
 
+    static class totalCPUUid{
+        int userCPUTime = 0;
+        int kernelCPUTime = 0;
+    }
+
     // class to store Wi-Fi usage
-    class wifiPerUid{
+    static class wifiPerUid{
         int scan = 0;
         int sleep = 0;
         int idle = 0;
@@ -39,10 +44,12 @@ public class EnergyInfo {
 
 
     // class containing all the information for one uid/package
-    class uidEnergyStats {
+    static class uidEnergyStats {
+        String uid = "9999";
         // list of each process and its CPU usage
         List<processPerUid> processPerUidList;
         wifiPerUid wifiData;
+        totalCPUUid CPUData;
         int audioPerUid = 0;
     }
 
@@ -52,9 +59,9 @@ public class EnergyInfo {
     // lists and values for one batterystat evaluation
     List<uidToPackage> uidToPackageList; //mapping package to uid
     bluetooth bluetoothData; //global bluetooth data
-    List<uidEnergyStats> uidEnergyStatsList; //utilization stats for every uid
+    static List<uidEnergyStats> uidEnergyStatsList; //utilization stats for every uid
 
-    EnergyInfo() {
+    public EnergyInfo() {
 //        this.cpuFrequencies = new ArrayList<>();
         this.uidToPackageList = new ArrayList<>();
         this.uidEnergyStatsList = new ArrayList<>();

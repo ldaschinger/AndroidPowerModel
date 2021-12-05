@@ -14,11 +14,10 @@ public class BatteryStats {
 //            Terminal.run(args[1]);
             System.out.println("start calculatePowerUsage:" + args[3]);
 
-            ArrayList<EnergyInfo> energyInfoArray = new ArrayList<>();
+            EnergyInfo EnergyInfo = new EnergyInfo();
 
-            energyInfoArray = BatteryStatsParserCSV.parseFile(args[3], 23);
+            EnergyInfo = BatteryStatsParserCSV.parseFile(args[3], 23);
 
-            System.out.println(Arrays.toString(energyInfoArray.toArray()));
 
 //            calculatePowerUsage();
         } else {
