@@ -8,7 +8,7 @@ import java.util.List;
 
 
 public class BatteryStatsParserCSV {
-    public static EnergyInfo parseFile(String fileName, int traceviewStart) throws IOException {
+    public static EnergyInfo parseFile(String fileName) throws IOException {
         EnergyInfo EnergyInfo = new EnergyInfo();
 
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
