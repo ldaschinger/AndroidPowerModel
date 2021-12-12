@@ -1,18 +1,25 @@
 package com.example.batterystats.core.batterystats;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class EnergyUsed {
 
     public EnergyUsed() {
         this.uidEnergyUsedList = new ArrayList<>();
+        this.mAhPerCPUSilver = new ArrayList<>(Collections.nCopies(6, 0)); // 6 CPUs
+        this.mAhPerCPUGold = new ArrayList<>(Collections.nCopies(2, 0)); // 2 CPUs
+
     }
 
-    static int bluetoothControllerIdleEnergy = 0;
-    static int bluetoothControllerTxEnergy = 0;
-    static int bluetoothControllerRxEnergy = 0;
-    static int bluetoothControllerTotalEnergy = 0;
+    int bluetoothControllerIdleEnergy = 0;
+    int bluetoothControllerTxEnergy = 0;
+    int bluetoothControllerRxEnergy = 0;
+    int bluetoothControllerTotalEnergy = 0;
+
+    List<Integer> mAhPerCPUSilver;
+    List<Integer> mAhPerCPUGold;
 
 
     static class uidEnergyUsed {

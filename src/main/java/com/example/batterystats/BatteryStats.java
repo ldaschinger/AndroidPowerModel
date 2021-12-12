@@ -26,14 +26,14 @@ public class BatteryStats {
             System.out.println("start parsing of file:" + args[3]);
             EnergyInfo = BatteryStatsParserCSV.parseFile(args[3]);
 
-            System.out.println("now calculate power usage:");
-            EnergyCalculator.calculatePowerUsage(EnergyInfo);
-
             System.out.println("start parsing systrace file:" + args[1]);
             FreqData = FrequencyParse.parseSystrace(args[1]);
 
             System.out.println("now calculate frequency usages:");
             FrequencyCalculator.calculateFrequencyUsage(FreqData);
+
+            System.out.println("now calculate power usage:");
+            EnergyCalculator.calculatePowerUsage(EnergyInfo, FreqData);
 
         } else {
             System.out.println("usage:");

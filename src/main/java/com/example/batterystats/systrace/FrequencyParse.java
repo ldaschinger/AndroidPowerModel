@@ -64,6 +64,8 @@ public class FrequencyParse {
         Elements scriptElements = doc.getElementsByClass("trace-data");
         String sysTraceText = scriptElements.get(1).dataNodes().get(0).getWholeData();
 
+
+
         for (String line : sysTraceText.split("\n")) {
             Matcher freqMatcher = freqRowPattern.matcher(line);
             Matcher idleMatcher = idleRowPattern.matcher(line);
@@ -71,27 +73,40 @@ public class FrequencyParse {
             if (freqMatcher.find()) {
                 // must find which CPU it was to save the value in the correct object
                 String cpuId = freqMatcher.group(3);
+                FreqData.lastTimestamp = Integer.parseInt(toMillisec(freqMatcher.group(1))); // is overwritten every time, in the end its equal to the last timestamp
 
-                FreqData.ClusterList.get(0).CPUList.stream().filter(o -> o.CPUId.equals(cpuId)).forEach(
-                        o -> {
-                            o.frequenciesList.add(Integer.parseInt(freqMatcher.group(2)));
-                            o.timeStampsList.add(Integer.parseInt(toMillisec(freqMatcher.group(1))));
-                        }
-                );
-                //TODO also for cluster 1
+                // for every cluster
+                for (int i = 0; i < FreqData.ClusterList.size(); i++) {
+                    FreqData.ClusterList.get(i).CPUList.stream().filter(o -> o.CPUId.equals(cpuId)).forEach(
+                            o -> {
+                                o.frequenciesList.add(Integer.parseInt(freqMatcher.group(2)));
+                                o.timeStampsList.add(Integer.parseInt(toMillisec(freqMatcher.group(1))));
+                            }
+                    );
+                }
+
             }
 
             if (idleMatcher.find()) {
                 // must find which CPU it was to save the value in the correct object
                 String cpuId = idleMatcher.group(2);
+                FreqData.lastTimestamp = Integer.parseInt(toMillisec(idleMatcher.group(1))); // is overwritten every time, in the end its equal to the last timestamp
 
-                FreqData.ClusterList.get(0).CPUList.stream().filter(o -> o.CPUId.equals(cpuId)).forEach(
-                        o -> {
-                            o.frequenciesList.add(0); // idle means frequency is 0
-                            o.timeStampsList.add(Integer.parseInt(toMillisec(idleMatcher.group(1))));
-                        }
-                );
-                //TODO also for cluster 1
+                for (int i = 0; i < FreqData.ClusterList.size(); i++) {
+                    FreqData.ClusterList.get(i).CPUList.stream().filter(o -> o.CPUId.equals(cpuId)).forEach(
+                            o -> {
+                                o.frequenciesList.add(0); // idle means frequency is 0
+                                o.timeStampsList.add(Integer.parseInt(toMillisec(idleMatcher.group(1))));
+                            }
+                    );
+                }
+            }
+        }
+
+        // append the last timestamp to every time list
+        for (FrequencyData.CPUCluster Cluster : FreqData.ClusterList) {
+            for (FrequencyData.CPUCluster.CPU CPU : Cluster.CPUList){
+                CPU.timeStampsList.add(FreqData.lastTimestamp);
             }
         }
 
