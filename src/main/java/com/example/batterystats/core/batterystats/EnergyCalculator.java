@@ -62,6 +62,7 @@ public class EnergyCalculator {
             System.out.println("CPU" + FreqData.ClusterList.get(1).CPUList.get(i).CPUId + " used mAh: " + mAhOfCPUTotal);
         }
 
+        System.out.println("\n ----------------------------- TOTALS CLUSTER --------------------------------------");
         int totalSilverClustermAh = 0;
         int totalGoldClustermAh = 0;
         for (Integer mAhOfFreq : EnergyUsed.mAhPerCPUSilver){
@@ -70,7 +71,7 @@ public class EnergyCalculator {
         for (Integer mAhOfFreq : EnergyUsed.mAhPerCPUGold){
             totalGoldClustermAh += mAhOfFreq;
         }
-        System.out.println("\ntotal silver mAh " + totalSilverClustermAh);
+        System.out.println("total silver mAh " + totalSilverClustermAh);
         System.out.println("total gold mAh " + totalGoldClustermAh);
 
     }

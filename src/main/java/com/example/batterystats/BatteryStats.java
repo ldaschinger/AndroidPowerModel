@@ -29,10 +29,10 @@ public class BatteryStats {
             System.out.println("start parsing systrace file:" + args[1]);
             FreqData = FrequencyParse.parseSystrace(args[1]);
 
-            System.out.println("now calculate frequency usages:");
+            // calculate the time every CPU has spent at each of its frequencies
             FrequencyCalculator.calculateFrequencyUsage(FreqData);
 
-            System.out.println("now calculate power usage:");
+            // calculate the used power by CPU, camera, WiFi etc
             EnergyCalculator.calculatePowerUsage(EnergyInfo, FreqData);
 
         } else {
@@ -40,16 +40,4 @@ public class BatteryStats {
             System.out.println("\tjava -jar BatteryStats.jar --power_profile path/power_profile.xml --batterystats path/batterystats\n");
         }
     }
-
-
-//    private static void calculatePowerUsage(){
-//        System.out.println("opening batterystats file:");
-//
-////        File file = new File("C:\\Users\\pankaj\\Desktop\\test.txt");
-////        System.out.println("Run " + run + ": saving battery stats.");
-////        this.executeCommand("adb shell dumpsys batterystats", new File(batteryStatsFilename));
-//
-//    }
-
-
 }
