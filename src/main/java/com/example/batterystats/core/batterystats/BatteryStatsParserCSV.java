@@ -28,7 +28,7 @@ public class BatteryStatsParserCSV {
                     // in this case we have a line like: 9,0,i,uid,10034,com.android.mms
                     // we enter each uid-package name pair of such lines in the list in the EnergyInfo object
                     EnergyInfo.uidToPackage pair = new EnergyInfo.uidToPackage();
-                    pair.uid = Integer.parseInt(values[4]);
+                    pair.uid = values[4];
                     pair.packageName = values[5];
                     EnergyInfo.uidToPackageList.add(pair);
                 } else if (values[0].equals("9") && values[1].equals("0") && values[2].equals("l") && values[3].equals("gble")){
@@ -36,10 +36,10 @@ public class BatteryStatsParserCSV {
                     EnergyInfo.bluetooth triplet = new EnergyInfo.bluetooth();
                     triplet.idle = Integer.parseInt(values[4]);
                     triplet.rx = Integer.parseInt(values[5]);
-                    triplet.tx = Integer.parseInt(values[6]);
+                    triplet.tx = Integer.parseInt(values[7]);
                     EnergyInfo.bluetoothData = triplet;
                 } else if (values[0].equals("9")  && values[2].equals("l") &&
-                        (values[3].equals("cpu") || values[3].equals("pr") || values[3].equals("wfcd") || values[3].equals("aud"))){
+                        (values[3].equals("cpu") || values[3].equals("pr") || values[3].equals("wfcd") || values[3].equals("aud") || values[3].equals("cam"))){
                     // add the per uid values
                     addDataToUidObject(EnergyInfo, values);
                 }
@@ -59,7 +59,7 @@ public class BatteryStatsParserCSV {
 //        return list.stream().map(list.uid).filter(name::equals).findFirst().isPresent();
 //    }
     // https://stackoverflow.com/questions/18852059/java-list-containsobject-with-field-value-equal-to-x
-    public static void addDataToUidObject(EnergyInfo EnergyInfo, String[] values){
+    private static void addDataToUidObject(EnergyInfo EnergyInfo, String[] values){
         if (!(EnergyInfo.uidEnergyStatsList.stream().filter(o -> o.uid.equals(values[1])).findFirst().isPresent())){
             // if there is no object in the list for this uid yet we add one
             EnergyInfo.uidEnergyStats newUidEnergyStats = new EnergyInfo.uidEnergyStats();
@@ -91,12 +91,19 @@ public class BatteryStatsParserCSV {
                         }
                 );
                 break;
+            case "cam":
+                // add the info to the right object (same uid)
+                EnergyInfo.uidEnergyStatsList.stream().filter(o -> o.uid.equals(values[1])).forEach(
+                        o -> {
+                            o.cameraPerUid = Integer.parseInt(values[4]);
+                        }
+                );
+                break;
             case "cpu":
                 // add the info to the right object (same uid)
                 EnergyInfo.uidEnergyStatsList.stream().filter(o -> o.uid.equals(values[1])).forEach(
                         o -> {
                             o.CPUData = new EnergyInfo.uidEnergyStats.totalCPUUid();
-                            // TODO must still determine exact mapping for scan and idle for sure
                             o.CPUData.totalUserCPUTime = Integer.parseInt(values[4]);;
                             o.CPUData.totalKernelCPUTime = Integer.parseInt(values[5]);
                         }

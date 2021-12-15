@@ -21,13 +21,12 @@ public class BatteryStats {
             // we calculate the used Energy [J] = ms*A*V/1000
 
             EnergyInfo EnergyInfo = new EnergyInfo();
-            FrequencyData FreqData = new FrequencyData();
 
             System.out.println("start parsing of file:" + args[3]);
             EnergyInfo = BatteryStatsParserCSV.parseFile(args[3]);
 
             System.out.println("start parsing systrace file:" + args[1]);
-            FreqData = FrequencyParse.parseSystrace(args[1]);
+            FrequencyData FreqData = FrequencyParse.parseSystrace(args[1]);
 
             // calculate the time every CPU has spent at each of its frequencies
             FrequencyCalculator.calculateFrequencyUsage(FreqData);

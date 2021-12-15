@@ -16,6 +16,9 @@ public class FrequencyData {
 
     // we want to save the last timestamp in the trace to calculate the last period of every frequency
     public int lastTimestamp;
+    public int firstTimeStamp;
+    public float totalAverageCPUCurrent;
+
 
     // this class contains a list of CPUs
     static public class CPUCluster{
@@ -24,6 +27,8 @@ public class FrequencyData {
         }
 
         public List<FrequencyData.CPUCluster.CPU> CPUList;
+
+        public float clusterAverageCurrent = 0;
 
         // this class holds the frequencies and respective timestamps of a CPU
         static public class CPU{

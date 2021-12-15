@@ -24,6 +24,7 @@ public class FrequencyParse {
         //      <value>2</value> <!-- cluster 1 has cpu6, cpu7 -->
         // additional information: https://gadgetversus.com/processor/qualcomm-snapdragon-xr1-specs/
         FrequencyData FreqData = new FrequencyData();
+
         // Cluster with CPUs with Kryo Silver cores (Energy cores)
         FrequencyData.CPUCluster ClusterSilver = new FrequencyData.CPUCluster();
         // Cluster with CPUs with Kryo Gold cores (High performance cores)
@@ -64,7 +65,7 @@ public class FrequencyParse {
         Elements scriptElements = doc.getElementsByClass("trace-data");
         String sysTraceText = scriptElements.get(1).dataNodes().get(0).getWholeData();
 
-
+        int firstTimestamp = 0;
 
         for (String line : sysTraceText.split("\n")) {
             Matcher freqMatcher = freqRowPattern.matcher(line);
@@ -85,6 +86,10 @@ public class FrequencyParse {
                     );
                 }
 
+                if(firstTimestamp == 0){
+                    // we have not yet saved the first timestamp
+                    firstTimestamp = Integer.parseInt(toMillisec(freqMatcher.group(1)));
+                }
             }
 
             if (idleMatcher.find()) {
@@ -100,8 +105,16 @@ public class FrequencyParse {
                             }
                     );
                 }
+
+                if(firstTimestamp == 0){
+                    // we have not yet saved the first timestamp
+                    firstTimestamp = Integer.parseInt(toMillisec(idleMatcher.group(1)));
+                }
             }
         }
+
+        // save the beginning of the trace measurement
+        FreqData.firstTimeStamp = firstTimestamp;
 
         // append the last timestamp to every time list
         for (FrequencyData.CPUCluster Cluster : FreqData.ClusterList) {

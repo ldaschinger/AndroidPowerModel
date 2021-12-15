@@ -19,7 +19,7 @@ public class FrequencyCalculator {
 ////        plt.plot().add(FreqData.ClusterList.get(0).CPUList.get(0).timeStampsList,
 ////                FreqData.ClusterList.get(0).CPUList.get(0).frequenciesList, "o").label("frequencies");
 //        // adapt the data source to see other CPUs
-//        plt.hist().add(FreqData.ClusterList.get(0).CPUList.get(0).frequenciesList);
+//        plt.hist().add(FreqData.ClusterList.get(1).CPUList.get(0).frequenciesList);
 //        plt.legend().loc("upper right");
 //        plt.title("CPU usage");
 //        try {
@@ -53,9 +53,9 @@ public class FrequencyCalculator {
                 }
             }
             System.out.println("CPU:" + CPU.CPUId + " spent [ms] in:");
-            System.out.println("idle   300000    576000    748800     998400    1209600    1324800    1516800    1612800     1708800");
+            System.out.println("freq: idle   300000    576000    748800     998400    1209600    1324800    1516800    1612800     1708800");
 
-            System.out.println(CPU.timeSpentAtFrequenciesSilver.get(0) + "       " + CPU.timeSpentAtFrequenciesSilver.get(1) + "      " + CPU.timeSpentAtFrequenciesSilver.get(2) + "     " +
+            System.out.println("time: " + CPU.timeSpentAtFrequenciesSilver.get(0) + "       " + CPU.timeSpentAtFrequenciesSilver.get(1) + "      " + CPU.timeSpentAtFrequenciesSilver.get(2) + "     " +
                     CPU.timeSpentAtFrequenciesSilver.get(3) + "         " + CPU.timeSpentAtFrequenciesSilver.get(4) + "       " + CPU.timeSpentAtFrequenciesSilver.get(5) + "        " +
                     CPU.timeSpentAtFrequenciesSilver.get(6) + "        " + CPU.timeSpentAtFrequenciesSilver.get(7) + "        " + CPU.timeSpentAtFrequenciesSilver.get(8) + "          " +
                     CPU.timeSpentAtFrequenciesSilver.get(9) + "\n");
@@ -84,10 +84,10 @@ public class FrequencyCalculator {
                 }
             }
 
-            System.out.println("CPU:" + CPU.CPUId + " spent [ms] in:");
-            System.out.println("idle   300000 652800 825600 979200 1132800 1363200 1536000 1747200 1843200 1996800 2054400 2169600 2208000 2361600 2400000 2457600 2515200");
+            System.out.println("CPU:" + CPU.CPUId + " spent [ms] in frequency [Hz]");
+            System.out.println("freq: idle   300000 652800 825600 979200 1132800 1363200 1536000 1747200 1843200 1996800 2054400 2169600 2208000 2361600 2400000 2457600 2515200");
 
-            System.out.println(CPU.timeSpentAtFrequenciesGold.get(0) + "       " + CPU.timeSpentAtFrequenciesGold.get(1) + "      " + CPU.timeSpentAtFrequenciesGold.get(2) + "     " +
+            System.out.println("time: " + CPU.timeSpentAtFrequenciesGold.get(0) + "       " + CPU.timeSpentAtFrequenciesGold.get(1) + "      " + CPU.timeSpentAtFrequenciesGold.get(2) + "     " +
                     CPU.timeSpentAtFrequenciesGold.get(3) + "         " + CPU.timeSpentAtFrequenciesGold.get(4) + "       " + CPU.timeSpentAtFrequenciesGold.get(5) + "        " +
                     CPU.timeSpentAtFrequenciesGold.get(6) + "        " + CPU.timeSpentAtFrequenciesGold.get(7) + "        " + CPU.timeSpentAtFrequenciesGold.get(8) + "          " +
                     CPU.timeSpentAtFrequenciesGold.get(9) + "        " + CPU.timeSpentAtFrequenciesGold.get(10) + "        " + CPU.timeSpentAtFrequenciesGold.get(11) + "        " +
