@@ -7,6 +7,7 @@ import com.github.sh0nk.matplotlib4j.PythonConfig;
 import com.github.sh0nk.matplotlib4j.PythonExecutionException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -14,12 +15,17 @@ import java.util.stream.Collectors;
 public class FrequencyCalculator {
     public static void calculateFrequencyUsage(FrequencyData FreqData) {
 
-//        // visual representation in a histogram of the used CPU frequencies
+//        // visual representation in a histogram or plot of the used CPU frequencies
 //        Plot plt = Plot.create(PythonConfig.pythonBinPathConfig("/usr/bin/python")); //must use python2
-////        plt.plot().add(FreqData.ClusterList.get(0).CPUList.get(0).timeStampsList,
-////                FreqData.ClusterList.get(0).CPUList.get(0).frequenciesList, "o").label("frequencies");
+//        // remove but save the last timestamp from list for them to be same length for plotting
+//        int size = FreqData.ClusterList.get(0).CPUList.get(0).timeStampsList.size();
+//        int lastTimestamp = FreqData.ClusterList.get(0).CPUList.get(0).timeStampsList.get(size-1);
+//        FreqData.ClusterList.get(0).CPUList.get(0).timeStampsList.remove(size-1);
+//
+//        plt.plot().add(FreqData.ClusterList.get(0).CPUList.get(0).timeStampsList,
+//                FreqData.ClusterList.get(0).CPUList.get(0).frequenciesList, "o").label("frequencies");
 //        // adapt the data source to see other CPUs
-//        plt.hist().add(FreqData.ClusterList.get(1).CPUList.get(0).frequenciesList);
+////        plt.hist().add(FreqData.ClusterList.get(0).CPUList.get(5).frequenciesList);
 //        plt.legend().loc("upper right");
 //        plt.title("CPU usage");
 //        try {
@@ -29,6 +35,9 @@ public class FrequencyCalculator {
 //        } catch (PythonExecutionException e) {
 //            e.printStackTrace();
 //        }
+//
+//        // add the last Timestamp again for later power calculation
+//        FreqData.ClusterList.get(0).CPUList.get(0).timeStampsList.add(lastTimestamp);
 
         // we need to know the available frequencies
         PowerProfile PowerProfile = new PowerProfile();

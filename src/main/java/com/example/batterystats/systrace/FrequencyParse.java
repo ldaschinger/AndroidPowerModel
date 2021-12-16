@@ -56,8 +56,11 @@ public class FrequencyParse {
         // <idle>-0     (-----) [002] .n.1  5823.901096: cpu_idle: state=4294967295 cpu_id=2
         // sugov:0-1832  ( 1832) [002] ....  5823.901134: cpu_frequency: state=748800 cpu_id=1
         // more information on format: https://unix.stackexchange.com/questions/130624/how-to-interpret-cpu-idle-and-cpu-frequency-events-trace-logged-by-ftrace
+        // official documentation with perfetto: https://perfetto.dev/docs/data-sources/cpu-freq
+
+        //parentheses mark a group
         Pattern freqRowPattern = Pattern.compile(".* \\[\\d{3}].* (.*): cpu_frequency: state=(\\d*) cpu_id=(\\d)");
-        Pattern idleRowPattern = Pattern.compile(".* \\[.*] .* (.*): cpu_idle: state=\\d* cpu_id=(\\d)");
+        Pattern idleRowPattern = Pattern.compile(".* \\[.*] .* (.*): cpu_idle: state=(\\d*) cpu_id=(\\d)");
 
         Document doc = Jsoup.parse(file, "UTF-8", fileName);
         // we have  the following class in three places. The relevant information is in the second element (scriptElements.get(1))
@@ -71,6 +74,12 @@ public class FrequencyParse {
             Matcher freqMatcher = freqRowPattern.matcher(line);
             Matcher idleMatcher = idleRowPattern.matcher(line);
 
+            // frequency and idle state are independent. We use the frequenciesList to store data for power calculation
+            // we have two cases: 1. constant frequency and idle state change, 2. constant state and frequency changes
+            // 1. When idle state becomes 1,2,3 we neglect power consumption and set frequency = 0
+            // 1. When non-idle (state 0 or 4294967295 = back to 0) we write the current frequency
+            // 2. when we are already in idle 0 and the frequency changes we need to store it in frequenciesList, otherwise only in currentFrequency
+
             if (freqMatcher.find()) {
                 // must find which CPU it was to save the value in the correct object
                 String cpuId = freqMatcher.group(3);
@@ -80,8 +89,13 @@ public class FrequencyParse {
                 for (int i = 0; i < FreqData.ClusterList.size(); i++) {
                     FreqData.ClusterList.get(i).CPUList.stream().filter(o -> o.CPUId.equals(cpuId)).forEach(
                             o -> {
-                                o.frequenciesList.add(Integer.parseInt(freqMatcher.group(2)));
-                                o.timeStampsList.add(Integer.parseInt(toMillisec(freqMatcher.group(1))));
+                                o.currentFrequency = Integer.parseInt(freqMatcher.group(2)); //store the current frequency (used in idle matcher)
+
+                                if (o.currentState == 0){
+                                    // CPU is in non-idle, the frequency change has an impact on power consumption
+                                    o.frequenciesList.add(Integer.parseInt(freqMatcher.group(2)));
+                                    o.timeStampsList.add(Integer.parseInt(toMillisec(freqMatcher.group(1))));
+                                }
                             }
                     );
                 }
@@ -93,14 +107,26 @@ public class FrequencyParse {
             }
 
             if (idleMatcher.find()) {
+                // matcher: (".* \\[.*] .* (.*): cpu_idle: state=(\\d*) cpu_id=(\\d)");
+                // group(1) = timestamp, group(2) = state, group(3) = cpu_id
                 // must find which CPU it was to save the value in the correct object
-                String cpuId = idleMatcher.group(2);
+                String cpuId = idleMatcher.group(3);
                 FreqData.lastTimestamp = Integer.parseInt(toMillisec(idleMatcher.group(1))); // is overwritten every time, in the end its equal to the last timestamp
 
                 for (int i = 0; i < FreqData.ClusterList.size(); i++) {
                     FreqData.ClusterList.get(i).CPUList.stream().filter(o -> o.CPUId.equals(cpuId)).forEach(
                             o -> {
-                                o.frequenciesList.add(0); // idle means frequency is 0
+                                if (idleMatcher.group(2).equals("0") || idleMatcher.group(2).equals("4294967295")){
+                                    // if we go to state 0 or when going back to non-idle with value 0xffffffff (= 4294967295 = -1) we go back to the previously set freq.
+                                    o.frequenciesList.add(o.currentFrequency);
+                                    o.currentState = 0; // non-idle
+                                } else {
+                                    //we have idleMatcher.group(2).equals("1") || idleMatcher.group(2).equals("2") || idleMatcher.group(2).equals("3")
+                                    // if we go to state 1,2 or 3 this means we are in an idle state where we neglect power consumption by setting frequency to 0
+                                    o.frequenciesList.add(0);
+                                    o.currentState = 3; // set to idle
+                                }
+
                                 o.timeStampsList.add(Integer.parseInt(toMillisec(idleMatcher.group(1))));
                             }
                     );
@@ -123,8 +149,8 @@ public class FrequencyParse {
             }
         }
 
-        FreqData.ClusterList.add(ClusterGold);
-        FreqData.ClusterList.add(ClusterSilver);
+//        FreqData.ClusterList.add(ClusterGold);
+//        FreqData.ClusterList.add(ClusterSilver);
 
         return FreqData;
     }

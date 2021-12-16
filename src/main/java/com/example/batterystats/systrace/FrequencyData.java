@@ -46,6 +46,9 @@ public class FrequencyData {
             List<Integer> timeStampsList;
             List<Integer> frequenciesList;
 
+            int currentFrequency = 0;
+            int currentState = 3; //assume idle at beginning
+
             // CPU freqs silver cores/cluster 0: 300000 576000 748800 998400 1209600 1324800 1516800 1612800 1708800
             public List<Integer> timeSpentAtFrequenciesSilver;
             // CPU freqs gold cores/cluster 1: 300000 652800 825600 979200 1132800 1363200 1536000 1747200 1843200 1996800 2054400 2169600 2208000 2361600 2400000 2457600 2515200

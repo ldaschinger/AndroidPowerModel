@@ -17,7 +17,7 @@ public class EnergyCalculator {
         EnergyUsed EnergyUsed = new EnergyUsed();
 
         // use the frequency data of the CPUs to get a good estimate of power used by the CPUs
-        calculateCPUPower(PowerProfile, FreqData);
+        calculateCPUPower(PowerProfile, FreqData, EnergyUsed);
 
         System.out.println("\n \n now calculate Energy usage per uid and per component \n");
         //----------------------------- BLUETOOTH --------------------------------------
@@ -27,6 +27,13 @@ public class EnergyCalculator {
         EnergyUsed.bluetoothControllerRxEnergy = (PowerProfile.bluetoothControllerRx * EnergyInfo.bluetoothData.rx)/MS_IN_HR;
         EnergyUsed.bluetoothControllerTotalEnergy = EnergyUsed.bluetoothControllerIdleEnergy +
                 EnergyUsed.bluetoothControllerTxEnergy + EnergyUsed.bluetoothControllerRxEnergy;
+
+        //----------------------------- TOTAL REPORTED CPU TIME BY BATTERYSTATS --------------------------------------
+        int totalCPUTimeBatterystats = 0;
+        for (EnergyInfo.uidEnergyStats uidEnergyStat: EnergyInfo.uidEnergyStatsList){
+            totalCPUTimeBatterystats += uidEnergyStat.CPUData.totalUserCPUTime + uidEnergyStat.CPUData.totalKernelCPUTime;
+        }
+        System.out.println("totalCPUTimeBatterystats = " + totalCPUTimeBatterystats + "ms");
 
         //----------------------------- PER UID USAGE --------------------------------------
         float totalProcessesEnergy = 0;
@@ -58,8 +65,8 @@ public class EnergyCalculator {
             EnergyUsed.totalAudioEnergy += uidEnergyUsed.audioEnergyPerUid;
 
             //----------------------------- TOTAL CPU USAGE --------------------------------------
-            uidEnergyUsed.CPUEnergy.totalUserCPU = (FreqData.totalAverageCPUCurrent * uidEnergyStat.CPUData.totalUserCPUTime)/MS_IN_HR;
-            uidEnergyUsed.CPUEnergy.totalKernelCPU = (FreqData.totalAverageCPUCurrent * uidEnergyStat.CPUData.totalKernelCPUTime)/MS_IN_HR;
+            uidEnergyUsed.CPUEnergy.totalUserCPU = (float)uidEnergyStat.CPUData.totalUserCPUTime/totalCPUTimeBatterystats*EnergyUsed.totalmAhAllCluster;
+            uidEnergyUsed.CPUEnergy.totalKernelCPU = (float)uidEnergyStat.CPUData.totalKernelCPUTime/totalCPUTimeBatterystats*EnergyUsed.totalmAhAllCluster;
             EnergyUsed.totalCPUEnergy += uidEnergyUsed.CPUEnergy.totalKernelCPU + uidEnergyUsed.CPUEnergy.totalUserCPU;
 
             uidEnergyUsed.totalEnergy = uidEnergyUsed.CPUEnergy.totalUserCPU + uidEnergyUsed.CPUEnergy.totalKernelCPU + uidEnergyUsed.audioEnergyPerUid + uidEnergyUsed.cameraEnergyPerUid + uidEnergyUsed.totalWifiEnergy;
@@ -103,7 +110,7 @@ public class EnergyCalculator {
 
     }
 
-    private static void calculateCPUPower(PowerProfile PowerProfile, FrequencyData FreqData){
+    private static void calculateCPUPower(PowerProfile PowerProfile, FrequencyData FreqData, EnergyUsed EnergyUsed){
         // calculate the total Energy used by the CPU taking into account the different frequencies
         System.out.println("\n ----------------------------- SILVER CLUSTER --------------------------------------");
         System.out.println("Note: some CPUs times spent in different frequencies might not add up to test duration since the frequency at start is unknown \n");
@@ -171,7 +178,8 @@ public class EnergyCalculator {
 
         System.out.println("total silver " + silverClustermAhTotal + " mAh");
         System.out.println("total gold " + goldClustermAhTotal + " mAh");
-        System.out.println("total both " + (silverClustermAhTotal+goldClustermAhTotal) + " mAh");
+        EnergyUsed.totalmAhAllCluster = silverClustermAhTotal+goldClustermAhTotal;
+        System.out.println("total both " + EnergyUsed.totalmAhAllCluster + " mAh");
         FreqData.totalAverageCPUCurrent = ((silverClustermAhTotal+goldClustermAhTotal)*MS_IN_HR)/(goldClusterTimeTotal+silverClusterTimeTotal);
         System.out.println("average " + FreqData.totalAverageCPUCurrent + " mA");
 

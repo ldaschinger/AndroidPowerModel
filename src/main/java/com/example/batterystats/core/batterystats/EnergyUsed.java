@@ -26,6 +26,7 @@ public class EnergyUsed {
     float totalCameraEnergy = 0;
     float totalCPUEnergy = 0;
 
+    float totalmAhAllCluster = 0;
 //    static List<Integer> mAhPerCPUSilver;
 //    static List<Integer> mAhPerCPUGold;
 //
