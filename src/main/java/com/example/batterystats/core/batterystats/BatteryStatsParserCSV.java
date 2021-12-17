@@ -38,8 +38,10 @@ public class BatteryStatsParserCSV {
                     triplet.rx = Integer.parseInt(values[5]);
                     triplet.tx = Integer.parseInt(values[7]);
                     EnergyInfo.bluetoothData = triplet;
+                } else if (values[0].equals("9") && values[1].equals("0") && values[2].equals("l") && values[3].equals("gwfcd")){
+                    EnergyInfo.wifiIdle = Integer.parseInt(values[4]); // global idle time of wifi module
                 } else if (values[0].equals("9")  && values[2].equals("l") &&
-                        (values[3].equals("cpu") || values[3].equals("pr") || values[3].equals("wfcd") || values[3].equals("aud") || values[3].equals("cam"))){
+                        (values[3].equals("cpu") || values[3].equals("pr") || values[3].equals("wfcd") || values[3].equals("wfl")  || values[3].equals("aud") || values[3].equals("cam"))){
                     // add the per uid values
                     addDataToUidObject(EnergyInfo, values);
                 }
@@ -73,13 +75,19 @@ public class BatteryStatsParserCSV {
                 // add the info to the right object (same uid)
                 EnergyInfo.uidEnergyStatsList.stream().filter(o -> o.uid.equals(values[1])).forEach(
                         o -> {
-                            o.wifiData = new EnergyInfo.uidEnergyStats.wifiPerUid();
-                            // TODO must still determine exact mapping for scan and idle for sure
-                            o.wifiData.scan = 0;
-                            o.wifiData.sleep = 0;
-                            o.wifiData.idle = 0;
+                            o.wifiData.idle = Integer.parseInt(values[4]); //usually zero and only reported globally
                             o.wifiData.rx = Integer.parseInt(values[5]);
                             o.wifiData.tx = Integer.parseInt(values[7]);
+                            // wifiData.sleep not available in batterystats.csv of the SBC
+                            // wifiData.scan available under wfl
+                        }
+                );
+                break;
+            case "wfl":
+                // add the info to the right object (same uid)
+                EnergyInfo.uidEnergyStatsList.stream().filter(o -> o.uid.equals(values[1])).forEach(
+                        o -> {
+                            o.wifiData.scan = Integer.parseInt(values[12]);
                         }
                 );
                 break;

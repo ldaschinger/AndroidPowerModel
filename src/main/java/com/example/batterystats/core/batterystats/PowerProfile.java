@@ -4,28 +4,32 @@ import java.util.Arrays;
 import java.util.List;
 
 public class PowerProfile {
+
+     int durationMs = 180000;
+     float baselineCurrentmA = 64;
+
+
      // the following values are given in mA (as in power_profile.xml)
      float bluetoothControllerIdle = 0; //neglected
-     float bluetoothControllerTx = 10.6f;
+     float bluetoothControllerTx = 13.4f;
      // selected this low since experiments have shown that tx has much higher impact on total power
      // the values includes the whole system impact, not only Rx/Tx of the Bluetooth module
-     float bluetoothControllerRx = 1f;
+     float bluetoothControllerRx = 2f;
 
      // typical values: https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.72.4178&rep=rep1&type=pdf
      // sleep 20mW, idle 110mW, tx 2500 mW, rx 900 mW
      // data sheet states that whole wifi module at 11Mbps 733mW and at lowest rate 453mW
 
-     float wifiScan = 120 ;
-     float wifiSleep = 0; // neglected
-     float wifiControllerIdle = 80;
-     float wifiControllerTx = 900;
-     float wifiControllerRx = 300;
+     float wifiScan = 350 ;
+     float wifiSleep = 0; // neglected, note: only available globally - not per uid
+     float wifiControllerIdle = 13; // note: only available globally - not per uid
+     float wifiControllerTx = 2000;
+     float wifiControllerRx = 400;
 
-     float audio = 42f; // 42mA for replay of audio
+     float audioFromMemory = 42f; // 42mA for replay of audio
+     float audioFromMediaStream = 19f;
 
      float cameraAvg = 113f; // 113mA for use of camera, excluding rendering
-
-     float CPU = 0;
 
      public PowerProfile() {
           this.mAUsedAtFrequenciesSilver = Arrays.asList(0, 14, 25, 31, 46, 57, 84, 96, 114, 139);

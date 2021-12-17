@@ -60,6 +60,7 @@ public class EnergyInfo {
     // lists and values for one batterystat evaluation
     List<uidToPackage> uidToPackageList; //mapping package to uid
     bluetooth bluetoothData; //global bluetooth data
+    int wifiIdle = 0;
     List<uidEnergyStats> uidEnergyStatsList; //utilization stats for every uid
 
     public EnergyInfo() {

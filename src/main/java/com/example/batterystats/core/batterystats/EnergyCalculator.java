@@ -61,7 +61,9 @@ public class EnergyCalculator {
 
             //----------------------------- AUDIO --------------------------------------
             // Android uses (totalTime * mAudioAveragePowerMa) / MS_IN_HR;
-            uidEnergyUsed.audioEnergyPerUid = (PowerProfile.audio * uidEnergyStat.audioPerUid)/MS_IN_HR;
+            // depending on the use case must select audio from download/stream or audio from memory
+//            uidEnergyUsed.audioEnergyPerUid = (PowerProfile.audioFromMemory * uidEnergyStat.audioPerUid)/MS_IN_HR;
+            uidEnergyUsed.audioEnergyPerUid = (PowerProfile.audioFromMediaStream * uidEnergyStat.audioPerUid)/MS_IN_HR;
             EnergyUsed.totalAudioEnergy += uidEnergyUsed.audioEnergyPerUid;
 
             //----------------------------- TOTAL CPU USAGE --------------------------------------
@@ -70,7 +72,7 @@ public class EnergyCalculator {
             EnergyUsed.totalCPUEnergy += uidEnergyUsed.CPUEnergy.totalKernelCPU + uidEnergyUsed.CPUEnergy.totalUserCPU;
 
             uidEnergyUsed.totalEnergy = uidEnergyUsed.CPUEnergy.totalUserCPU + uidEnergyUsed.CPUEnergy.totalKernelCPU + uidEnergyUsed.audioEnergyPerUid + uidEnergyUsed.cameraEnergyPerUid + uidEnergyUsed.totalWifiEnergy;
-            totalProcessesEnergy += uidEnergyUsed.totalEnergy;
+//            totalProcessesEnergy += uidEnergyUsed.totalEnergy;
 
             EnergyUsed.uidEnergyUsedList.add(uidEnergyUsed);
         }
@@ -93,20 +95,28 @@ public class EnergyCalculator {
             System.out.println((float)EnergyUsed.uidEnergyUsedList.get(i).totalEnergy/totalProcessesEnergy*100 + "%: uid: " + EnergyUsed.uidEnergyUsedList.get(i).uid + " process name: (last if several per uid) " + packageName + " used " +
                     EnergyUsed.uidEnergyUsedList.get(i).totalEnergy + " mAh");
         }
-        System.out.println("\n total Charge used by all processes = " + totalProcessesEnergy + " mAh");
+//        System.out.println("\n total Charge used by all processes = " + totalProcessesEnergy + " mAh");
 
 
 
         System.out.println("\n ----------------------------- COMPONENT TOTAL USAGES --------------------------------------");
-        float totalSBC = EnergyUsed.bluetoothControllerTotalEnergy + EnergyUsed.totalWifiEnergy +
-                EnergyUsed.totalAudioEnergy + EnergyUsed.totalCameraEnergy + EnergyUsed.totalCPUEnergy;
+        float baselineTotal = PowerProfile.durationMs*PowerProfile.baselineCurrentmA/MS_IN_HR;
 
-        System.out.println((float)EnergyUsed.bluetoothControllerTotalEnergy/totalSBC*100 + "%: bluetoothController Total " +
+        EnergyUsed.totalWifiEnergy += EnergyInfo.wifiIdle*PowerProfile.wifiControllerIdle/MS_IN_HR;
+
+        float totalSBC = EnergyUsed.bluetoothControllerTotalEnergy + EnergyUsed.totalWifiEnergy +
+                EnergyUsed.totalAudioEnergy + EnergyUsed.totalCameraEnergy + baselineTotal;
+
+        System.out.println((float)baselineTotal/totalSBC*100 + "%: total Baseline " + baselineTotal + " mAh");
+        System.out.println((float)EnergyUsed.bluetoothControllerTotalEnergy/totalSBC*100 + "%: total Bluetooth " +
                 EnergyUsed.bluetoothControllerTotalEnergy + " mAh");
         System.out.println((float)EnergyUsed.totalWifiEnergy/totalSBC*100 + "%: total Wifi " + EnergyUsed.totalWifiEnergy + " mAh");
         System.out.println((float)EnergyUsed.totalAudioEnergy/totalSBC*100 + "%: total Audio " + EnergyUsed.totalAudioEnergy + " mAh");
         System.out.println((float)EnergyUsed.totalCameraEnergy/totalSBC*100 + "%: total Camera " + EnergyUsed.totalCameraEnergy + " mAh");
-        System.out.println((float)EnergyUsed.totalCPUEnergy/totalSBC*100 + "%: total CPU " + EnergyUsed.totalCPUEnergy + " mAh");
+
+        System.out.println("\n estimated total SBC = " + totalSBC + " mAh");
+
+        System.out.println("\n" + (float)EnergyUsed.totalCPUEnergy/totalSBC*100 + "%: total CPU (already included in above measurements)" + adaptCPUPower(EnergyUsed.totalCPUEnergy) + " mAh");
 
     }
 
@@ -138,11 +148,15 @@ public class EnergyCalculator {
             System.out.println("CPU" + FreqData.ClusterList.get(0).CPUList.get(i).CPUId + " used " + mAhOfCPUTotal+ " mAh");
             if (totalTime != 0){
                 averagemACPU = (mAhOfCPUTotal*MS_IN_HR)/totalTime;
+            } else {
+                averagemACPU = 0;
             }
             System.out.println("CPU" + FreqData.ClusterList.get(0).CPUList.get(i).CPUId + " used an average of (" + mAhOfCPUTotal + "*MS_IN_HR)" +"/" + totalTime + " = " + averagemACPU + " mA");
         }
 
         System.out.println("average silver cluster current " + (silverClustermAhTotal*MS_IN_HR)/silverClusterTimeTotal + " mA");
+        System.out.println("total silver cluster active time (not idle) " + silverClusterTimeTotal);
+
 
 
         System.out.println("\n ----------------------------- GOLD CLUSTER --------------------------------------");
@@ -172,6 +186,8 @@ public class EnergyCalculator {
             System.out.println("CPU" + FreqData.ClusterList.get(1).CPUList.get(i).CPUId + " used an average of " + mAhOfCPUTotal + "*MS_IN_HR)" + "/" + totalTime + " = " + averagemACPU + " mA");
         }
         System.out.println("average gold cluster current " + (goldClustermAhTotal*MS_IN_HR)/goldClusterTimeTotal + " mA");
+        System.out.println("total gold cluster active time (not idle) " + goldClusterTimeTotal);
+
 
 
         System.out.println("\n ----------------------------- TOTALS CLUSTER --------------------------------------");
@@ -180,9 +196,19 @@ public class EnergyCalculator {
         System.out.println("total gold " + goldClustermAhTotal + " mAh");
         EnergyUsed.totalmAhAllCluster = silverClustermAhTotal+goldClustermAhTotal;
         System.out.println("total both " + EnergyUsed.totalmAhAllCluster + " mAh");
+
+        System.out.println("------- CORRECTED total both " + adaptCPUPower(EnergyUsed.totalmAhAllCluster) + " mAh");
+
         FreqData.totalAverageCPUCurrent = ((silverClustermAhTotal+goldClustermAhTotal)*MS_IN_HR)/(goldClusterTimeTotal+silverClusterTimeTotal);
         System.out.println("average " + FreqData.totalAverageCPUCurrent + " mA");
 
         System.out.println(" \n \n ATTENTION SYSTRACE IS FOLLOWING LENGTH " + (FreqData.lastTimestamp-FreqData.firstTimeStamp) + " ms");
+    }
+
+    private static float adaptCPUPower(float originalmAh){
+        float power = 0.1655f;
+        float factor = 3.7227f;
+        float offset = 0;
+        return (float) Math.pow(originalmAh, power)*factor + offset;
     }
 }

@@ -15,15 +15,18 @@ import java.util.stream.Collectors;
 public class FrequencyCalculator {
     public static void calculateFrequencyUsage(FrequencyData FreqData) {
 
-//        // visual representation in a histogram or plot of the used CPU frequencies
-//        Plot plt = Plot.create(PythonConfig.pythonBinPathConfig("/usr/bin/python")); //must use python2
+        // visual representation in a histogram or plot of the used CPU frequencies
+        Plot plt = Plot.create(PythonConfig.pythonBinPathConfig("/usr/bin/python")); //must use python2
+
+//        int clusterIndex = 0;
+//        int CPUIndex = 4;
 //        // remove but save the last timestamp from list for them to be same length for plotting
-//        int size = FreqData.ClusterList.get(0).CPUList.get(0).timeStampsList.size();
-//        int lastTimestamp = FreqData.ClusterList.get(0).CPUList.get(0).timeStampsList.get(size-1);
-//        FreqData.ClusterList.get(0).CPUList.get(0).timeStampsList.remove(size-1);
+//        int size = FreqData.ClusterList.get(clusterIndex).CPUList.get(CPUIndex).timeStampsList.size();
+//        int lastTimestamp = FreqData.ClusterList.get(clusterIndex).CPUList.get(CPUIndex).timeStampsList.get(size-1);
+//        FreqData.ClusterList.get(clusterIndex).CPUList.get(CPUIndex).timeStampsList.remove(size-1);
 //
-//        plt.plot().add(FreqData.ClusterList.get(0).CPUList.get(0).timeStampsList,
-//                FreqData.ClusterList.get(0).CPUList.get(0).frequenciesList, "o").label("frequencies");
+//        plt.plot().add(FreqData.ClusterList.get(clusterIndex).CPUList.get(CPUIndex).timeStampsList,
+//                FreqData.ClusterList.get(clusterIndex).CPUList.get(CPUIndex).frequenciesList, "o").label("frequencies");
 //        // adapt the data source to see other CPUs
 ////        plt.hist().add(FreqData.ClusterList.get(0).CPUList.get(5).frequenciesList);
 //        plt.legend().loc("upper right");
@@ -37,7 +40,7 @@ public class FrequencyCalculator {
 //        }
 //
 //        // add the last Timestamp again for later power calculation
-//        FreqData.ClusterList.get(0).CPUList.get(0).timeStampsList.add(lastTimestamp);
+//        FreqData.ClusterList.get(clusterIndex).CPUList.get(CPUIndex).timeStampsList.add(lastTimestamp);
 
         // we need to know the available frequencies
         PowerProfile PowerProfile = new PowerProfile();
