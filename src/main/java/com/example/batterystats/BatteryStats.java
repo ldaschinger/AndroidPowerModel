@@ -9,7 +9,6 @@ import com.example.batterystats.systrace.FrequencyParse;
 
 import java.io.IOException;
 
-
 public class BatteryStats {
     public static void main(String[] args) throws IOException {
         if (args[0].equals("--systrace") && (!args[1].isEmpty())

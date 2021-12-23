@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+// this class offers the functionality to parse and store the information on CPU frequencies and usage from a systrace
 public class FrequencyParse {
     // function to parse a trace including CPU frequency information
     public static FrequencyData parseSystrace(String fileName) throws IOException {
@@ -148,9 +148,6 @@ public class FrequencyParse {
                 CPU.timeStampsList.add(FreqData.lastTimestamp);
             }
         }
-
-//        FreqData.ClusterList.add(ClusterGold);
-//        FreqData.ClusterList.add(ClusterSilver);
 
         return FreqData;
     }

@@ -4,36 +4,27 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+// this class stores the estimated used energy for different components and for every uid
 public class EnergyUsed {
 
     public EnergyUsed() {
         this.uidEnergyUsedList = new ArrayList<>();
-
-//        this.mAhPerCPUSilver = new ArrayList<>(Collections.nCopies(6, 0)); // 6 CPUs
-//        this.mAhPerCPUGold = new ArrayList<>(Collections.nCopies(2, 0)); // 2 CPUs
-//
-//        this.activeTimePerCPUSilver = new ArrayList<>(Collections.nCopies(6, 0)); // 6 CPUs
-//        this.activeTimePerCPUGold = new ArrayList<>(Collections.nCopies(2, 0)); // 2 CPUs
     }
 
     float bluetoothControllerIdleEnergy = 0;
     float bluetoothControllerTxEnergy = 0;
     float bluetoothControllerRxEnergy = 0;
-
     float bluetoothControllerTotalEnergy = 0;
+
+    
     float totalWifiEnergy = 0;
     float totalAudioEnergy = 0;
     float totalCameraEnergy = 0;
     float totalCPUEnergy = 0;
 
     float totalmAhAllCluster = 0;
-//    static List<Integer> mAhPerCPUSilver;
-//    static List<Integer> mAhPerCPUGold;
-//
-//    static List<Integer> activeTimePerCPUSilver;
-//    static List<Integer> activeTimePerCPUGold;
 
-
+    // every uid gets an energy estimation
     static class uidEnergyUsed implements Comparable<uidEnergyUsed>{
         String uid = "9999";
         List<processEnergyPerUid> processEnergyPerUidList;
@@ -44,7 +35,6 @@ public class EnergyUsed {
         float cameraEnergyPerUid = 0;
 
         float totalEnergy = 0;
-
 
         public uidEnergyUsed() {
             this.wifiEnergy = new wifiEnergyPerUid();
@@ -59,6 +49,7 @@ public class EnergyUsed {
             int kernelCPUTime = 0;
         }
 
+        // CPU usage time is divided in user and kernel
         static class totalCPUEnergyUid{
             float totalUserCPU= 0;
             float totalKernelCPU = 0;
@@ -73,6 +64,7 @@ public class EnergyUsed {
             float tx = 0;
         }
 
+        // custom compare function for class for two floats
         @Override
         public int compareTo(uidEnergyUsed u) {
             return Float.compare(totalEnergy, u.totalEnergy);

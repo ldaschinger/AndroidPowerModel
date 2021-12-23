@@ -45,13 +45,8 @@ public class BatteryStatsParserCSV {
                     // add the per uid values
                     addDataToUidObject(EnergyInfo, values);
                 }
-
-                // when we arrive at the point in the file
-//                energyInfoArray.add(Arrays.asList(values));
             }
         }
-
-//        records.get(records.size() - 1).setExit(Integer.MAX_VALUE);
 
         return EnergyInfo;
     }

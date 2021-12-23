@@ -12,12 +12,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+// this class uses the information from the parsed systrace to calculate the time spent at different frequencies
 public class FrequencyCalculator {
     public static void calculateFrequencyUsage(FrequencyData FreqData) {
 
         // visual representation in a histogram or plot of the used CPU frequencies
         Plot plt = Plot.create(PythonConfig.pythonBinPathConfig("/usr/bin/python")); //must use python2
 
+        // in order to plot a histogram of frequency usages uncomment this part:
 //        int clusterIndex = 0;
 //        int CPUIndex = 4;
 //        // remove but save the last timestamp from list for them to be same length for plotting
@@ -45,8 +47,6 @@ public class FrequencyCalculator {
         // we need to know the available frequencies
         PowerProfile PowerProfile = new PowerProfile();
 
-
-
         System.out.println("\n----------------------------- SILVER CLUSTER --------------------------------------");
         // calculate the time each CPU in the Silver cluster has spent in a frequency
         for (FrequencyData.CPUCluster.CPU CPU : FreqData.ClusterList.get(0).CPUList) {
@@ -72,10 +72,6 @@ public class FrequencyCalculator {
                     CPU.timeSpentAtFrequenciesSilver.get(6) + "        " + CPU.timeSpentAtFrequenciesSilver.get(7) + "        " + CPU.timeSpentAtFrequenciesSilver.get(8) + "          " +
                     CPU.timeSpentAtFrequenciesSilver.get(9) + "\n");
         }
-
-
-
-
 
 
         System.out.println("----------------------------- GOLD CLUSTER --------------------------------------");

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicReference;
 
+// this class calculates the actual energy used by components and uids
 public class EnergyCalculator {
     static int MS_IN_HR = 1000*60*60;
 
@@ -116,7 +117,7 @@ public class EnergyCalculator {
 
         System.out.println("\n estimated total SBC = " + totalSBC + " mAh");
 
-        System.out.println("\n" + (float)EnergyUsed.totalCPUEnergy/totalSBC*100 + "%: total CPU (already included in above measurements)" + adaptCPUPower(EnergyUsed.totalCPUEnergy) + " mAh");
+//        System.out.println("\n" + (float)EnergyUsed.totalCPUEnergy/totalSBC*100 + "%: total CPU (already included in above measurements)" + adaptCPUPower(EnergyUsed.totalCPUEnergy) + " mAh");
 
     }
 
@@ -197,7 +198,7 @@ public class EnergyCalculator {
         EnergyUsed.totalmAhAllCluster = silverClustermAhTotal+goldClustermAhTotal;
         System.out.println("total both " + EnergyUsed.totalmAhAllCluster + " mAh");
 
-        System.out.println("------- CORRECTED total both " + adaptCPUPower(EnergyUsed.totalmAhAllCluster) + " mAh");
+        System.out.println("------- CORRECTED total both " + adaptCPUPower(EnergyUsed.totalmAhAllCluster, goldClusterTimeTotal + silverClusterTimeTotal) + " mAh");
 
         FreqData.totalAverageCPUCurrent = ((silverClustermAhTotal+goldClustermAhTotal)*MS_IN_HR)/(goldClusterTimeTotal+silverClusterTimeTotal);
         System.out.println("average " + FreqData.totalAverageCPUCurrent + " mA");
@@ -205,10 +206,14 @@ public class EnergyCalculator {
         System.out.println(" \n \n ATTENTION SYSTRACE IS FOLLOWING LENGTH " + (FreqData.lastTimestamp-FreqData.firstTimeStamp) + " ms");
     }
 
-    private static float adaptCPUPower(float originalmAh){
+    private static float adaptCPUPower(float originalmAh, float totalTime){
         float power = 0.1655f;
         float factor = 3.7227f;
         float offset = 0;
-        return (float) Math.pow(originalmAh, power)*factor + offset;
+
+        // calculate total CPU time of measurement, then subtract total CPU time when CPU is active
+        float idlePower = (PowerProfile.durationMs*PowerProfile.numberCores - totalTime)*PowerProfile.idleCPU;
+
+        return (float) Math.pow(originalmAh, power)*factor + offset + idlePower;
     }
 }
