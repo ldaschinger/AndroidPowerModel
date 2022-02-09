@@ -16,13 +16,15 @@ public class EnergyUsed {
     float bluetoothControllerRxEnergy = 0;
     float bluetoothControllerTotalEnergy = 0;
 
-    
+    float screenEnergy = 0;
+
     float totalWifiEnergy = 0;
     float totalAudioEnergy = 0;
     float totalCameraEnergy = 0;
     float totalCPUEnergy = 0;
 
     float totalmAhAllCluster = 0;
+    float totalmAhAllClusterAdapted = 0;
 
     // every uid gets an energy estimation
     static class uidEnergyUsed implements Comparable<uidEnergyUsed>{

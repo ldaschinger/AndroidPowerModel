@@ -38,8 +38,12 @@ public class BatteryStatsParserCSV {
                     triplet.rx = Integer.parseInt(values[5]);
                     triplet.tx = Integer.parseInt(values[7]);
                     EnergyInfo.bluetoothData = triplet;
-                } else if (values[0].equals("9") && values[1].equals("0") && values[2].equals("l") && values[3].equals("gwfcd")){
+                } else if (values[0].equals("9") && values[1].equals("0") && values[2].equals("l") && values[3].equals("gwfcd")) {
                     EnergyInfo.wifiIdle = Integer.parseInt(values[4]); // global idle time of wifi module
+                } else if (values[0].equals("9") && values[1].equals("0") && values[2].equals("l") && values[3].equals("br")) {
+                    EnergyInfo.screen = Integer.parseInt(values[6]); //screen full brightness on
+                } else if (values[0].equals("9") && values[1].equals("0") && values[2].equals("l") && values[3].equals("sst")) {
+                    EnergyInfo.testDuration = Integer.parseInt(values[4]); //9,0,l,sst,105631 - signal scanning = test duration
                 } else if (values[0].equals("9")  && values[2].equals("l") &&
                         (values[3].equals("cpu") || values[3].equals("pr") || values[3].equals("wfcd") || values[3].equals("wfl")  || values[3].equals("aud") || values[3].equals("cam"))){
                     // add the per uid values

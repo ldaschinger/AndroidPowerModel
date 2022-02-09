@@ -63,10 +63,14 @@ public class FrequencyParse {
         Pattern idleRowPattern = Pattern.compile(".* \\[.*] .* (.*): cpu_idle: state=(\\d*) cpu_id=(\\d)");
 
         Document doc = Jsoup.parse(file, "UTF-8", fileName);
-        // we have  the following class in three places. The relevant information is in the second element (scriptElements.get(1))
+        // when TRACING FROM PC: we have the following class in THREE places. The relevant information is in the SECOND element (scriptElements.get(1))
+        // when TRACING ON DEVICE: we have the following class in TWO placeS. The relevant information is in the FIRST element (scriptElements.get(0))
         // <script class="trace-data" type="application/text">
         Elements scriptElements = doc.getElementsByClass("trace-data");
+        // FOR TRACING WITH PC
         String sysTraceText = scriptElements.get(1).dataNodes().get(0).getWholeData();
+        // FOR TRACING WITH SBC
+//        String sysTraceText = scriptElements.get(0).dataNodes().get(0).getWholeData();
 
         int firstTimestamp = 0;
 

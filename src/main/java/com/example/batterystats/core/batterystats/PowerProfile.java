@@ -5,16 +5,23 @@ import java.util.List;
 
 // this class describes the power coefficients for different components determined by measurements
 public class PowerProfile {
-     static int durationMs = 180000;
+//     static int durationMs = 105000;
      static int numberCores = 8;
-     float baselineCurrentmA = 64;
+     float baselineCurrentNoDozemA = 64; //with wifi and ble
+     float baselineCurrentDozemA = 26; //no wifi and ble
+
 
      // the following values are given in mA (as in power_profile.xml)
-     float bluetoothControllerIdle = 0; //neglected
-     float bluetoothControllerTx = 13.4f;
+     float bluetoothControllerIdle = 5; //neglected
+     float bluetoothControllerTx = 50f;
      // selected this low since experiments have shown that tx has much higher impact on total power
      // the values includes the whole system impact, not only Rx/Tx of the Bluetooth module
-     float bluetoothControllerRx = 2f;
+     float bluetoothControllerRx = 30f;
+
+     float screenAvg = 144f; //average value for white
+//     float screenAvg = 84f; //average value for black
+//     float screenAvg = 114f; //average value for mixed
+
 
      // typical values: https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.72.4178&rep=rep1&type=pdf
      // sleep 20mW, idle 110mW, tx 2500 mW, rx 900 mW
