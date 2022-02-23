@@ -94,19 +94,20 @@ public class EnergyCalculator {
 
         // print the 8 processes with the highest impact on battery life
         System.out.println("\n ----------------------------- PROCESSES WITH ELEVATED BATTERY USAGE --------------------------------------");
-        System.out.println("ATTENTION: process name is equal to last process of a uid if several are present for one uid");
+        System.out.println("Note: process name is equal to last process of a uid if several are present for one uid");
+
+        System.out.println("\nBATTERYSTATS DURATION: " + EnergyInfo.testDuration + " ms\n");
 
         // if we want to reduce consumption and would for example fully remove the process using 50% CPU time
         // we will not reduce the CPU power by 50% since we only reduce the active part -> the gold/silverClusterTimeTotal
         // therefore for an improved estimation we would have to calculate power used by idle (no process responsible) and power in active and assign to processes percentage
-        System.out.println("\ntotal GOLD (" + goldClusterTimeTotal + " ms) + SILVER (" + silverClusterTimeTotal + " ms) cluster active CPU time (not idle) " + (goldClusterTimeTotal + silverClusterTimeTotal) +  " ms"+ "\n");
-        System.out.println("total test duration: " + EnergyInfo.testDuration + " ms\n");
+//        System.out.println("\ntotal GOLD (" + goldClusterTimeTotal + " ms) + SILVER (" + silverClusterTimeTotal + " ms) cluster active CPU time (not idle) " + (goldClusterTimeTotal + silverClusterTimeTotal) +  " ms"+ "\n");
 
-        System.out.println("The following ratio indicates how much is the percentage of active time and how much idle (max is 8): ");
+        System.out.println("The following ratio indicates the percentage of active CPU time over idle CPU time (max is 8): ");
         float fractionDirect = (goldClusterTimeTotal + silverClusterTimeTotal)/systrace_duration;
         float fractionPercentage = (fractionDirect/8*100);
-        System.out.println("CPUActiveDuration/totalTestDuration = " + fractionDirect + " (" + fractionPercentage + "%)");
-        System.out.println("A higher ratio will mean reductions in CPU time will lead to higher reduction in CPU power \n");
+        System.out.println("CPUActiveDuration/totalTestDuration = " + fractionDirect + " (" + fractionPercentage + "% of the max = 8)");
+//        System.out.println("A higher ratio will mean reductions in CPU time will lead to higher reduction in CPU power \n");
 
 
         for (int i = 0; i < 10; i++){
@@ -150,7 +151,11 @@ public class EnergyCalculator {
 
         float baselineTotal = EnergyInfo.testDuration*PowerProfile.baselineCurrentDozemA/MS_IN_HR;
 
-        float additionalXR1Processing = (0.5f*EnergyUsed.totalmAhAllClusterAdapted-baselineTotal);
+        //batterystats length EnergyInfo.testDuration
+        //systrace length is systrace_duration
+        // we need to adapt the CPU estimation if the measurement duration of systrace and batterystats are not the same
+        float durationFactor = (float)EnergyInfo.testDuration/(float)systrace_duration;
+        float additionalXR1Processing = (durationFactor*PowerProfile.XR1Factor*EnergyUsed.totalmAhAllClusterAdapted-baselineTotal);
 
         EnergyUsed.totalWifiEnergy += EnergyInfo.wifiIdle*PowerProfile.wifiControllerIdle/MS_IN_HR;
 
@@ -158,7 +163,7 @@ public class EnergyCalculator {
                 EnergyUsed.totalAudioEnergy + EnergyUsed.totalCameraEnergy + baselineTotal + EnergyUsed.screenEnergy + additionalXR1Processing;
 
         System.out.println((float)baselineTotal/totalSBC*100 + "%: Baseline power for system " + baselineTotal + " mAh");
-        System.out.println((float)additionalXR1Processing/totalSBC*100 + "%: Processing above baseline " + additionalXR1Processing + " mAh");
+        System.out.println("[" + (float)additionalXR1Processing/totalSBC*100 + "%: Processing above baseline " + additionalXR1Processing + " mAh] - components also include additional processing");
         System.out.println((float)EnergyUsed.bluetoothControllerTotalEnergy/totalSBC*100 + "%: total Bluetooth " +
                 EnergyUsed.bluetoothControllerTotalEnergy + " mAh");
         System.out.println((float)EnergyUsed.totalWifiEnergy/totalSBC*100 + "%: total Wifi " + EnergyUsed.totalWifiEnergy + " mAh");
@@ -166,15 +171,15 @@ public class EnergyCalculator {
         System.out.println((float)EnergyUsed.totalCameraEnergy/totalSBC*100 + "%: total Camera " + EnergyUsed.totalCameraEnergy + " mAh");
         System.out.println((float)EnergyUsed.screenEnergy/totalSBC*100 + "%: total Screen " + EnergyUsed.screenEnergy + " mAh");
 
-        System.out.println("\nEstimated total (excluding additional CPU usage not used for Idle, Wifi, Audio or Camera) = " + totalSBC + " mAh");
+        System.out.println("\nEstimated total = " + totalSBC + " mAh");
 
 //        System.out.println("\n" + (float)EnergyUsed.totalCPUEnergy/totalSBC*100 +
 //        "%: total CPU (already included in above measurements)" + adaptCPUPower(EnergyUsed.totalCPUEnergy) + " mAh");
 
         System.out.println("\n ----------------------------- README --------------------------------------");
         System.out.println(" ---> Remember to set correct screen current in PowerProfile.java");
-        System.out.println(" ---> Remember to use a systrace and batterystats trace of the same length");
-        System.out.println(" ---> Remember to set correct systrace type in FrequencyParse.java");
+        System.out.println(" ---> For higher accuracy use a systrace and batterystats trace of the same length");
+        System.out.println(" ---> Remember to set correct systrace type in FrequencyParse.java (on device or from PC)");
 
 
 
@@ -213,12 +218,12 @@ public class EnergyCalculator {
             } else {
                 averagemACPU = 0;
             }
-            System.out.println("CPU" + FreqData.ClusterList.get(0).CPUList.get(i).CPUId + " used an average of (" +
-                    mAhOfCPUTotal + "*MS_IN_HR)" +"/" + totalTime + " = " + averagemACPU + " mA");
+            System.out.println("CPU" + FreqData.ClusterList.get(0).CPUList.get(i).CPUId + " on average uses (" +
+                    mAhOfCPUTotal + "*MS_IN_HR)" +"/" + totalTime + " = " + averagemACPU + " mA when active");
         }
 
         System.out.println("average silver cluster current when active = " + (silverClustermAhTotal*MS_IN_HR)/silverClusterTimeTotal + " mA");
-        System.out.println("total silver cluster active CPU time (not idle) " + silverClusterTimeTotal+ "ms");
+//        System.out.println("total silver cluster active CPU time (not idle) " + silverClusterTimeTotal+ "ms");
 
 
         System.out.println("\n ----------------------------- GOLD CLUSTER --------------------------------------");
@@ -246,16 +251,16 @@ public class EnergyCalculator {
             if (totalTime != 0){
                 averagemACPU = (mAhOfCPUTotal*MS_IN_HR)/totalTime;
             }
-            System.out.println("CPU" + FreqData.ClusterList.get(1).CPUList.get(i).CPUId + " used an average of " +
-                    mAhOfCPUTotal + "*MS_IN_HR)" + "/" + totalTime + " = " + averagemACPU + " mA");
+            System.out.println("CPU" + FreqData.ClusterList.get(1).CPUList.get(i).CPUId + " on average uses " +
+                    mAhOfCPUTotal + "*MS_IN_HR)" + "/" + totalTime + " = " + averagemACPU + " mA when active");
         }
         System.out.println("average gold cluster current when active = " + (goldClustermAhTotal*MS_IN_HR)/goldClusterTimeTotal + " mA");
-        System.out.println("total gold cluster active CPU time (not idle) " + goldClusterTimeTotal + "ms");
+//        System.out.println("total gold cluster active CPU time (not idle) " + goldClusterTimeTotal + "ms");
 
 
         System.out.println("\n ----------------------------- TOTALS CLUSTER --------------------------------------");
         systrace_duration = (FreqData.lastTimestamp-FreqData.firstTimeStamp);
-        System.out.println("systrace has the following length: " + (FreqData.lastTimestamp-FreqData.firstTimeStamp) + " ms");
+        System.out.println("SYSTRACE DURATION: " + systrace_duration+ " ms");
 
         System.out.println("\ntotal silver " + silverClustermAhTotal + " mAh");
         System.out.println("total gold " + goldClustermAhTotal + " mAh");
@@ -264,11 +269,11 @@ public class EnergyCalculator {
 
         FreqData.totalAverageCPUCurrent = ((silverClustermAhTotal+goldClustermAhTotal)*MS_IN_HR)/
                 (goldClusterTimeTotal+silverClusterTimeTotal);
-        System.out.println("average both clusters " + FreqData.totalAverageCPUCurrent + " mA");
+        System.out.println("average current both clusters " + FreqData.totalAverageCPUCurrent + " mA");
 
         EnergyUsed.totalmAhAllClusterAdapted = adaptCPUPower(EnergyUsed.totalmAhAllCluster, goldClusterTimeTotal +
                 silverClusterTimeTotal);
-        System.out.println("\nCORRECTED total both " + EnergyUsed.totalmAhAllClusterAdapted + " mAh");
+        System.out.println("\nAfter applying non-linearity total both " + EnergyUsed.totalmAhAllClusterAdapted + " mAh");
     }
 
     private static float adaptCPUPower(float originalmAh, float totalTime){

@@ -12,7 +12,7 @@ public class PowerProfile {
 
 
      // the following values are given in mA (as in power_profile.xml)
-     float bluetoothControllerIdle = 5; //neglected
+     float bluetoothControllerIdle = 5;
      float bluetoothControllerTx = 50f;
      // selected this low since experiments have shown that tx has much higher impact on total power
      // the values includes the whole system impact, not only Rx/Tx of the Bluetooth module
@@ -47,6 +47,7 @@ public class PowerProfile {
           this.frequenciesGold = Arrays.asList(0, 300000, 652800, 825600, 979200, 1132800, 1363200, 1536000, 1747200, 1843200, 1996800, 2054400, 2169600, 2208000, 2361600, 2400000, 2457600, 2515200);
      }
 
+     static float XR1Factor = 0.2f;
      static float idleCPU = 0.00000015f;
 
      List<Integer> mAUsedAtFrequenciesSilver;
