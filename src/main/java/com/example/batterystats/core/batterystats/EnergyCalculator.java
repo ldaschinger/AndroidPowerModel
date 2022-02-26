@@ -126,7 +126,7 @@ public class EnergyCalculator {
 
             //CPU usage per hour
             float time = (EnergyUsed.uidEnergyUsedList.get(i).CPUEnergy.totalKernelCPU+EnergyUsed.uidEnergyUsedList.get(i).CPUEnergy.totalUserCPU)/EnergyUsed.totalmAhAllClusterAdapted*totalCPUTimeBatterystats;
-            System.out.println("CPU time/h = " + (time/EnergyInfo.testDuration*60) + " min");
+            System.out.println("CPU time/h = " + (time/systrace_duration*60) + " min");
 //            (float)uidEnergyStat.CPUData.totalKernelCPUTime/totalCPUTimeBatterystats*EnergyUsed.totalmAhAllClusterAdapted;
 
             if(i<3){
@@ -283,7 +283,7 @@ public class EnergyCalculator {
         float offset = 0;
 
         // calculate total CPU time of measurement, then subtract total CPU time when CPU is active
-        float idlePower = (EnergyInfo.testDuration*PowerProfile.numberCores - totalTime)*PowerProfile.idleCPU;
+        float idlePower = (systrace_duration*PowerProfile.numberCores - totalTime)*PowerProfile.idleCPU;
 
         return (float) Math.pow(originalmAh, power)*factor + offset + idlePower;
     }

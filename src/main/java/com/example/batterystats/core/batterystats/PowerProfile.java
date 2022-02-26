@@ -18,8 +18,8 @@ public class PowerProfile {
      // the values includes the whole system impact, not only Rx/Tx of the Bluetooth module
      float bluetoothControllerRx = 30f;
 
-     float screenAvg = 144f; //average value for white
-//     float screenAvg = 84f; //average value for black
+//     float screenAvg = 144f; //average value for white
+     float screenAvg = 84f; //average value for black
 //     float screenAvg = 114f; //average value for mixed
 
 
