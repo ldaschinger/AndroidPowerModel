@@ -1,3 +1,10 @@
+/**
+ * definition of EnergyInfo class where information from the battery stats parsing is stored
+ *
+ * @author Lukas Daschinger
+ * @version 1.0.0
+ */
+
 package com.example.batterystats.core.batterystats;
 
 import java.util.ArrayList;

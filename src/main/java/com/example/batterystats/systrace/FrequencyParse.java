@@ -1,3 +1,11 @@
+/**
+ * implementation of the parser for the systrace file extracting pairs of frequency and timestamps
+ *
+ * @author Lukas Daschinger
+ * @version 1.0.0
+ */
+
+
 package com.example.batterystats.systrace;
 
 import org.jsoup.Jsoup;

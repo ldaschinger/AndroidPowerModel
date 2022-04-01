@@ -1,11 +1,15 @@
-package com.example.batterystats.core.batterystats;
+/**
+ * Parses the battery stats csv file and saves values in EnergyInfo
+ *
+ * @author Lukas Daschinger
+ * @version 1.0.0
+ */
 
+package com.example.batterystats.core.batterystats;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
-
 
 public class BatteryStatsParserCSV {
     public static EnergyInfo parseFile(String fileName) throws IOException {

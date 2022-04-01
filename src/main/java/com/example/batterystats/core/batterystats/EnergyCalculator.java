@@ -1,11 +1,14 @@
+/**
+ * This file implements the actual power model using data from the batterystats and systrace
+ * The code prints a list of the most power consuming components and also processes
+ *
+ * @author Lukas Daschinger
+ * @version 1.0.0
+ */
+
 package com.example.batterystats.core.batterystats;
 
 import com.example.batterystats.systrace.FrequencyData;
-import com.github.sh0nk.matplotlib4j.Plot;
-import com.github.sh0nk.matplotlib4j.PythonConfig;
-import com.github.sh0nk.matplotlib4j.PythonExecutionException;
-
-import java.io.IOException;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicReference;
 

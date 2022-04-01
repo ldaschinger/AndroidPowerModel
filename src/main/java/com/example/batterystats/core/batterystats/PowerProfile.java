@@ -1,3 +1,10 @@
+/**
+ * definition of PowerProfile class where information about the weights of each component is saved
+ *
+ * @author Lukas Daschinger
+ * @version 1.0.0
+ */
+
 package com.example.batterystats.core.batterystats;
 
 import java.util.Arrays;
@@ -47,6 +54,7 @@ public class PowerProfile {
           this.frequenciesGold = Arrays.asList(0, 300000, 652800, 825600, 979200, 1132800, 1363200, 1536000, 1747200, 1843200, 1996800, 2054400, 2169600, 2208000, 2361600, 2400000, 2457600, 2515200);
      }
 
+     // weight for how strongly CPU power estimation impacts total consumption
      static float XR1Factor = 0.2f;
      static float idleCPU = 0.00000015f;
 

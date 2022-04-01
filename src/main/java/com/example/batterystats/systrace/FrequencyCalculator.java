@@ -1,16 +1,17 @@
+/**
+ * this class implements the function calculateFrequencyUsage that calculates the time spent at each frequency based
+ * on the data parsed from the systrace file
+ *
+ * @author Lukas Daschinger
+ * @version 1.0.0
+ */
+
 package com.example.batterystats.systrace;
 
 import com.example.batterystats.core.batterystats.PowerProfile;
-import com.github.sh0nk.matplotlib4j.NumpyUtils;
 import com.github.sh0nk.matplotlib4j.Plot;
 import com.github.sh0nk.matplotlib4j.PythonConfig;
-import com.github.sh0nk.matplotlib4j.PythonExecutionException;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 // this class uses the information from the parsed systrace to calculate the time spent at different frequencies
 public class FrequencyCalculator {
@@ -19,7 +20,7 @@ public class FrequencyCalculator {
         // visual representation in a histogram or plot of the used CPU frequencies
         Plot plt = Plot.create(PythonConfig.pythonBinPathConfig("/usr/bin/python")); //must use python2
 
-        // in order to plot a histogram of frequency usages uncomment this part:
+        /******************** in order to plot a histogram of frequency usages uncomment this part: ******************/
 //        int clusterIndex = 0;
 //        int CPUIndex = 4;
 //        // remove but save the last timestamp from list for them to be same length for plotting

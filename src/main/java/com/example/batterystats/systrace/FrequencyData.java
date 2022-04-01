@@ -1,9 +1,13 @@
+/**
+ * this class defines the necessary structures for saving data from the systrace file
+ *
+ * @author Lukas Daschinger
+ * @version 1.0.0
+ */
+
 package com.example.batterystats.systrace;
 
-import com.example.batterystats.core.batterystats.EnergyInfo;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -55,7 +59,4 @@ public class FrequencyData {
             public List<Integer> timeSpentAtFrequenciesGold;
         }
     }
-
-    // CPU class for
-
 }
